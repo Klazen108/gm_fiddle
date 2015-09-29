@@ -1,6 +1,7 @@
 <?php
 
 class Entry {
+	public $id;
 	public $hash;
 	public $editor_hash;
 	public $text_content;
@@ -11,6 +12,7 @@ class Entry {
 	
 	public static function createFromDBRow($row) {
         $obj = new Entry(
+	        $row['id'],
 	        $row['hash'],
 	        $row['editor_hash'],
 	        $row['text_content'],
@@ -22,7 +24,8 @@ class Entry {
         return $obj;
     }
 	
-	function __construct($hash, $editor_hash, $text_content, $date_created, $date_edited, $title, $description) {
+	function __construct($id, $hash, $editor_hash, $text_content, $date_created, $date_edited, $title, $description) {
+		$this->id = $id;
 		$this->hash = $hash;
 		$this->editor_hash = $editor_hash;
 		$this->text_content = $text_content;
