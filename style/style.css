@@ -1,6 +1,7 @@
 body, html {
 	background-color:#444;
 	height:100%;
+	margin:0;
 }
 
 textarea {
@@ -8,9 +9,60 @@ textarea {
 	font-family: monospace;
 }
 
-div.main-content {
+div.wrapper {
 	height:100%;
-	margin:1em;
+	padding:1em;
+}
+
+div.main-content {
+	margin:0 auto;
+    height:100%;
+}
+
+#header { 
+    height: 5em; 
+    position:absolute; 
+    left:0; 
+    top:0; 
+    width:100%; 
+    
+	color: white;
+	text-align: center;
+	padding-top: 1em;
+	
+	border-bottom: 3px solid black;
+}
+
+#header a {
+	color:#CCF;
+}
+
+#header a:hover {
+	color:#DDF;
+}
+
+#header a:visited {
+	color:#AAF;
+}
+
+#footer { 
+    height: 50px; 
+    position:absolute; 
+    left:0; 
+    bottom:0; 
+    width:100%;
+	
+	border-top: 3px solid black;
+}
+  
+#content { 
+    position: absolute; 
+    top: 6.1em; 
+    bottom:50px; 
+    left:1em;
+    right:1em; 
+    /*width:100%;*/
+    overflow: auto;
 }
 
 div.event-div {
@@ -52,4 +104,8 @@ span.function {
 
 span.keyword {
 	color: #800;
+}
+
+input[type=submit] {
+	margin-bottom: 1em;
 }

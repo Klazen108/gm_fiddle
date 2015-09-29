@@ -53,7 +53,7 @@ function updateEntry($hash,$editor_hash,$text,$title,$description) {
 	$db = connectDB();
 	$query ="
 UPDATE ".DB_TABLE."
-SET text = :text ,
+SET text_content = :text ,
 	title = :title ,
 	description = :desc 
 WHERE hash = :hash 
@@ -66,15 +66,25 @@ AND   editor_hash = :ehash ";
 		":desc"=>$description,
 	);
 
-	$result = execute($db,$query,$params);
+	$rowCount = execute($db,$query,$params);
 	close($db);
-	
-	return $result;
+	if ($rowCount>0) return getEntry($hash);
+	else return null;
 }
 
 function getEntry($hash) {
 	$db = connectDB();
 	$results = query($db,"SELECT * FROM ".DB_TABLE." WHERE hash = :hash",array(":hash"=>$hash));
+	
+	//should only be one
+	$entry = Entry::createFromDBRow($results[0]);
+	close($db);
+	return $entry;
+}
+
+function getEntryForEdit($hash,$editor_hash) {
+	$db = connectDB();
+	$results = query($db,"SELECT * FROM ".DB_TABLE." WHERE hash = :hash AND editor_hash = :ehash ",array(":hash"=>$hash,":ehash"=>$editor_hash));
 	
 	//should only be one
 	$entry = Entry::createFromDBRow($results[0]);

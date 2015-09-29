@@ -1,4 +1,5 @@
 <?php
+include 'inc/config.php';
 include 'inc/dbinc.php';
 include 'inc/entry.php';
 
@@ -49,20 +50,7 @@ image_alpha = random_range(0.25,0.75)
 //many lines of code
 //many lines of code
 //many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
-//many lines of code
+show_message(\"hello!\")
 
 ---Draw
 draw_self()
@@ -85,6 +73,7 @@ else if (isset($_POST['example'])) {
 	$method="preview";
 	$input=$example_string;
 } else if (isset($_POST['create'])) $method="create";
+else if (isset($_POST['update'])) $method="update";
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 	//split request URI, remove empty elements, and rebase array to 0
@@ -96,8 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 		$input = $entry->getTextContent();
 		$method="display";
 	} else if ($arr_size>=2 && $arr[$arr_size-3]==='gm') { //gm & hash & editor hash
-		$hash = $arr[$arr_size-1];
-		$entry = getEntry($hash);
+		$hash = $arr[$arr_size-2];
+		$editor_hash = $arr[$arr_size-1];
+		$entry = getEntryForEdit($hash,$editor_hash);
 		$input = $entry->getTextContent();
 		$method="edit";
 	}
@@ -119,12 +109,107 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 		}
 	}
 } else if ($method=="create") {
-	$entry = addEntry($input,'test title','test description');
-	if (!is_null($entry)) {
-		header('Location: /gm/'.$entry->hash.'/'.$entry->editor_hash);
+	if (empty($input)) {
+		$method=""; //blank out the method if the user hit create without entering any text - just pretend nothing ever happened
+	} else {
+		$entry = addEntry($input,'test title','test description');
+		if (!is_null($entry)) {
+			header('Location: '.GMF_PATH.$entry->hash.'/'.$entry->editor_hash);
+			die();
+		}
+	}
+} else if ($method=="update") {
+	if (!empty($_POST['hash']) && !empty($_POST['ehash'])) {
+		$hash = $_POST['hash'];
+		$editor_hash = $_POST['ehash'];
+		$entry = updateEntry($hash,$editor_hash,$input,'test title','test description');
+		header('Location: '.GMF_PATH.$entry->hash.'/'.$entry->editor_hash);
 		die();
 	}
+	
 }
+
+?>
+
+<html>
+	<head>
+		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+		<script src="<?=GMF_PATH?>style/jquery-1.11.3.min.js"></script>
+		<link rel="stylesheet" href="<?=GMF_PATH?>style/style.css">
+		<script type="text/javascript">
+			$(document).delegate('textarea', 'keydown', function(e) {
+			  var keyCode = e.keyCode || e.which;
+			
+			  if (keyCode == 9) {
+			    e.preventDefault();
+			    var start = $(this).get(0).selectionStart;
+			    var end = $(this).get(0).selectionEnd;
+			
+			    // set textarea value to: text before caret + tab + text after caret
+			    $(this).val($(this).val().substring(0, start)
+			                + "\t"
+			                + $(this).val().substring(end));
+			
+			    // put caret at right position again
+			    $(this).get(0).selectionStart =
+			    $(this).get(0).selectionEnd = start + 1;
+			  }
+			});
+		</script>
+	</head>
+	<body>
+	    <div id="header">
+			<?php switch ($method) {
+				case "":
+					echo "GM Snippet Thingy IDK - enter some game maker code below to share a snippet. Try an example to see how!";
+					break;
+				case "display": ?>
+					GM Snippet Thingy IDK - <a href='<?=GMF_PATH?>'>Make your own!</a><br>
+					Share This Snippet: <a target="_blank" href="<?=GMF_PATH.$hash?>"><?=GMF_HOST_NAME.GMF_PATH.$hash?></a><br>
+					<?php break;
+				case "edit": ?>
+					GM Snippet Thingy IDK - Editor Panel - <b>Bookmark this link - you can edit your snippet with it</b><br>
+					Share This Snippet: <a target="_blank" href="<?=GMF_PATH.$hash?>"><?=GMF_HOST_NAME.GMF_PATH.$hash?></a><br>
+					Edit: <a target="_blank" href="<?=GMF_PATH.$hash.'/'.$editor_hash?>"><?=GMF_HOST_NAME.GMF_PATH.$hash.'/'.$editor_hash?></a><br>
+					<?php break;
+				case "preview":
+					echo "GM Snippet Thingy IDK - Previewing your code";
+					break;
+				case "update":
+					echo "how did you get here?";
+					break;
+				default: echo $method; break;
+			} ?>
+		</div>
+	    <div id="content">
+	    	<?php if ($method != "display") { ?>
+				<form class="pure-form" method="post">
+					<fieldset class="pure-group">
+						<textarea class="pure-input-1" name="input-code"><?=$input?></textarea>
+					</fieldset>
+					<?php if ($method != "edit") { ?>
+						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="example" value="Show Me An Example!" />
+					<?php } ?>
+					<?php if ($method != "edit") { ?>
+						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="preview" value="Preview" />
+						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="create" value="Create" />
+					<?php } else { ?>
+						<input type="hidden" name="hash" value="<?=$hash?>"/>
+						<input type="hidden" name="ehash" value="<?=$editor_hash?>"/>
+						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="update" value="Update" />
+					<?php } ?>
+				</form>
+			<?php } ?>
+			<?php
+				for ($i=0;$i<count($output);$i+=1) {
+					echo '<div class="event-div"><p class="event-name">'.$output[$i][0].'</p><p class="event-code">'.syntax_highlight($output[$i][1]).'</p></div>';
+				}
+			?>
+	    </div>
+	    <div id="footer">footer</div>
+	</body>
+</html>
+<?php
 
 function syntax_highlight($input) {
 	$KEYWORDS = array(
@@ -303,31 +388,4 @@ function syntax_highlight($input) {
 	$input = preg_replace('/(\b[a-zA-Z_]+)(?=\()/m','<span class="function">$1</span>',$input); //functions
 	return nl2br($input);
 }
-
 ?>
-
-<html>
-	<head>
-		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
-		<link rel="stylesheet" href="style/style.css">
-	</head>
-	<body>
-		<div class="main-content">
-			<?php if ($method != "display") { ?>
-			<form class="pure-form" method="post">
-				<fieldset class="pure-group">
-					<textarea class="pure-input-1" name="input-code"><?=$input?></textarea>
-				</fieldset>
-				<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="example" value="Show Me An Example!" />
-				<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="preview" value="Preview" />
-				<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="create" value="Create" />
-			</form>
-			<?php } ?>
-			<?php
-				for ($i=0;$i<count($output);$i+=1) {
-					echo '<div class="event-div"><p class="event-name">'.$output[$i][0].'</p><p class="event-code">'.syntax_highlight($output[$i][1]).'</p></div>';
-				}
-			?>
-		</div>
-	</body>
-</html>
