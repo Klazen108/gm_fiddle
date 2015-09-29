@@ -1,0 +1,44 @@
+body, html {
+	background-color:#444;
+	height:100%;
+}
+
+textarea {
+	height:30%;
+	font-family: monospace;
+}
+
+div.main-content {
+	height:100%;
+	margin:1em;
+}
+
+div.event-div {
+    border: 1px solid black;
+    border-radius: 10px;
+    background-color: white;
+    margin-bottom: 1em;
+    overflow: hidden;
+}
+
+div.event-div p.event-name {
+    border-bottom: 1px solid black;
+    padding: 2px 0px 2px 0px;
+    margin: 0;
+    text-align: center;
+    background-color: #DDF;
+}
+
+div.event-div p.event-code {
+    font-family: monospace;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+span.comment {
+	color: #080;
+}
+
+span.number {
+	color: #008;
+}
