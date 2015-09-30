@@ -65,13 +65,19 @@ if random() < 0.1 {
 //comment at end";
 
 $input="";
+$title="";
+$desc="";
 if (isset($_POST['input-code'])) $input=$_POST['input-code'];
+if (isset($_POST['input-title'])) $title=$_POST['input-title'];
+if (isset($_POST['input-desc'])) $desc=$_POST['input-desc'];
 
 $method="";
 if (isset($_POST['preview'])) $method="preview";
 else if (isset($_POST['example'])) {
 	$method="preview";
 	$input=$example_string;
+	$title="Example Snippet";
+	$desc="Just a bunch of nonsense to show you the format!";
 } else if (isset($_POST['create'])) $method="create";
 else if (isset($_POST['update'])) $method="update";
 
@@ -83,12 +89,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 		$hash = $arr[$arr_size-1];
 		$entry = getEntry($hash);
 		$input = $entry->getTextContent();
+		$title = $entry->getTitle();
+		$desc = $entry->getDescription();
 		$method="display";
 	} else if ($arr_size>=2 && $arr[$arr_size-3]==='gm') { //gm & hash & editor hash
 		$hash = $arr[$arr_size-2];
 		$editor_hash = $arr[$arr_size-1];
 		$entry = getEntryForEdit($hash,$editor_hash);
 		$input = $entry->getTextContent();
+		$title = $entry->getTitle();
+		$desc = $entry->getDescription();
 		$method="edit";
 	}
 }
@@ -112,7 +122,7 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 	if (empty($input)) {
 		$method=""; //blank out the method if the user hit create without entering any text - just pretend nothing ever happened
 	} else {
-		$entry = addEntry($input,'test title','test description');
+		$entry = addEntry($input,$title,$desc);
 		if (!is_null($entry)) {
 			header('Location: '.GMF_PATH.$entry->hash.'/'.$entry->editor_hash);
 			die();
@@ -122,7 +132,7 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 	if (!empty($_POST['hash']) && !empty($_POST['ehash'])) {
 		$hash = $_POST['hash'];
 		$editor_hash = $_POST['ehash'];
-		$entry = updateEntry($hash,$editor_hash,$input,'test title','test description');
+		$entry = updateEntry($hash,$editor_hash,$input,$title,$desc);
 		header('Location: '.GMF_PATH.$entry->hash.'/'.$entry->editor_hash);
 		die();
 	}
@@ -185,7 +195,9 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 	    	<?php if ($method != "display") { ?>
 				<form class="pure-form" method="post">
 					<fieldset class="pure-group">
-						<textarea class="pure-input-1" name="input-code"><?=$input?></textarea>
+						<input class="pure-input-1" name="input-title" maxlength="64" placeholder="Title" value="<?=$title?>"/>
+						<input class="pure-input-1" name="input-desc" maxlength="256" placeholder="Description" value="<?=$desc?>"/>
+						<textarea class="pure-input-1" name="input-code" placeholder="code"><?=$input?></textarea>
 					</fieldset>
 					<?php if ($method != "edit") { ?>
 						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="example" value="Show Me An Example!" />
@@ -199,6 +211,9 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="update" value="Update" />
 					<?php } ?>
 				</form>
+			<?php } else { ?>
+				<h1><?=$title?></h1>
+				<h2><?=$desc?></h2>
 			<?php } ?>
 			<?php
 				for ($i=0;$i<count($output);$i+=1) {
