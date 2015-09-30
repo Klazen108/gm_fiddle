@@ -55,7 +55,8 @@ function updateEntry($hash,$editor_hash,$text,$title,$description) {
 UPDATE ".DB_TABLE."
 SET text_content = :text ,
 	title = :title ,
-	description = :desc 
+	description = :desc ,
+	date_edited = CURRENT_TIMESTAMP
 WHERE hash = :hash 
 AND   editor_hash = :ehash ";
 	$params = array(
