@@ -118,6 +118,10 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 			}
 		}
 	}
+	if ($o_i==-1) {
+		$output[0][0]="Script";
+		$output[0][1]=$input;
+	}
 } else if ($method=="create") {
 	if (empty($input)) {
 		$method=""; //blank out the method if the user hit create without entering any text - just pretend nothing ever happened
@@ -221,7 +225,7 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 				}
 			?>
 	    </div>
-	    <div id="footer">footer</div>
+	    <div id="footer"><p>Site Design (c) 2015 Klazen108 &amp; Patrickgh3</p></div>
 	</body>
 </html>
 <?php
@@ -419,7 +423,7 @@ function syntax_highlight($input) {
 	$input = preg_replace("/('[^']*')/m",'<span class="constant">$1</span>',$input); //single quote strings
 	$input = preg_replace('~(//.*?)(?:$|\n)~s','<span class="comment">$1</span>',$input); //single line comments
 	$input = preg_replace('~(/\*.*?\*/)~s','<span class="comment">$1</span>',$input); //double line comments
-	$input = preg_replace('~(\d+)~m','<span class="constant">$1</span>',$input); //numbers
+	$input = preg_replace('~\b(\d+)\b~m','<span class="constant">$1</span>',$input); //numbers
 	$input = preg_replace('~\b(true|false|else|if|for|while)\b~m','<span class="constant">$1</span>',$input); //keywords
 	$input = preg_replace('~\b('.implode('|',$KEYWORDS).')\b~m','<span class="function">$1</span>',$input); //built-in variables
 	$input = preg_replace('/(\b[a-zA-Z_]+)(?=\()/m','<span class="function">$1</span>',$input); //functions
