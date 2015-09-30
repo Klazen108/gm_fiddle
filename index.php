@@ -72,7 +72,9 @@ if (isset($_POST['input-title'])) $title=$_POST['input-title'];
 if (isset($_POST['input-desc'])) $desc=$_POST['input-desc'];
 
 $method="";
-if (isset($_POST['preview'])) $method="preview";
+if (isset($_POST['preview'])) {
+	if ($input!=="") $method="preview";
+}
 else if (isset($_POST['example'])) {
 	$method="preview";
 	$input=$example_string;
@@ -147,6 +149,16 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 
 <html>
 	<head>
+		<title>
+			<?php 
+			echo "GMSnippet";
+			if ($method==="display" || $method==="preview") { 
+				echo " - ".$title;
+			} else if ($method==="edit") {
+				echo " - (Editing) ".$title;
+			}
+			?>
+		</title>
 		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 		<script src="<?=GMF_PATH?>style/jquery-1.11.3.min.js"></script>
 		<link rel="stylesheet" href="<?=GMF_PATH?>style/style.css">
@@ -207,8 +219,11 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="example" value="Show Me An Example!" />
 					<?php } ?>
 					<?php if ($method != "edit") { ?>
+						<?php if ($method != "preview") { ?>
 						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="preview" value="Preview" />
+						<?php } else { ?>
 						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="create" value="Create" />
+						<?php } ?>
 					<?php } else { ?>
 						<input type="hidden" name="hash" value="<?=$hash?>"/>
 						<input type="hidden" name="ehash" value="<?=$editor_hash?>"/>
@@ -416,6 +431,7 @@ function syntax_highlight($input) {
 		"y",
 		"yprevious",
 		"ystart",
+		"pi"
 	);
 
 	$input = str_replace(' ', '&nbsp;', $input); //space preservation
