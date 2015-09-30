@@ -78,6 +78,7 @@ div.event-div p.event-name {
     padding: 2px 0px 2px 0px;
     margin: 0;
     text-align: center;
+    font-weight: bold;
     /*background-color: #DDF;*/
 }
 
@@ -118,4 +119,9 @@ h1 {
 h2 {
 	font-size: 1.1em;
     color: white;
+}
+
+p.event-name img {
+	position: relative;
+	top: 2px;
 }

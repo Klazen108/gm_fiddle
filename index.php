@@ -217,7 +217,7 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 			<?php } ?>
 			<?php
 				for ($i=0;$i<count($output);$i+=1) {
-					echo '<div class="event-div"><p class="event-name">'.$output[$i][0].'</p><p class="event-code">'.syntax_highlight($output[$i][1]).'</p></div>';
+					echo '<div class="event-div"><p class="event-name">'.format_card_title($output[$i][0]).'</p><p class="event-code">'.syntax_highlight($output[$i][1]).'</p></div>';
 				}
 			?>
 	    </div>
@@ -225,6 +225,28 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 	</body>
 </html>
 <?php
+
+function format_card_title($title) {
+	if (preg_match('/alarm/i', $title)) {
+		return '<img src="'.GMF_PATH.'style/icons/alarm.png" />&nbsp;'.$title;
+	} else if (preg_match('/colli(?:de|sion)/i', $title)) {
+		return '<img src="'.GMF_PATH.'style/icons/collision.png" />&nbsp;'.$title;
+	} else if (preg_match('/create/i', $title)) {
+		return '<img src="'.GMF_PATH.'style/icons/create.png" />&nbsp;'.$title;
+	} else if (preg_match('/destroy/i', $title)) {
+		return '<img src="'.GMF_PATH.'style/icons/destroy.png" />&nbsp;'.$title;
+	} else if (preg_match('/draw/i', $title)) {
+		return '<img src="'.GMF_PATH.'style/icons/draw.png" />&nbsp;'.$title;
+	} else if (preg_match('/(?:key|press)/i', $title)) {
+		return '<img src="'.GMF_PATH.'style/icons/keyboard.png" />&nbsp;'.$title;
+	} else if (preg_match('/script/i', $title)) {
+		return '<img src="'.GMF_PATH.'style/icons/script.png" />&nbsp;'.$title;
+	} else if (preg_match('/step/i', $title)) {
+		return '<img src="'.GMF_PATH.'style/icons/step.png" />&nbsp;'.$title;
+	} else {
+		return '<img src="'.GMF_PATH.'style/icons/other.png" />&nbsp;'.$title;
+	}
+}
 
 function syntax_highlight($input) {
 	$KEYWORDS = array(
