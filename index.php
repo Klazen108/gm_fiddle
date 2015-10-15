@@ -219,9 +219,8 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="example" value="Show Me An Example!" />
 					<?php } ?>
 					<?php if ($method != "edit") { ?>
-						<?php if ($method != "preview") { ?>
 						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="preview" value="Preview" />
-						<?php } else { ?>
+						<?php if ($method == "preview") { ?>
 						<input class="pure-button pure-input-1 pure-button-primary" type="submit" name="create" value="Create" />
 						<?php } ?>
 					<?php } else { ?>
