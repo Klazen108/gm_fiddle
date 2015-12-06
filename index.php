@@ -182,6 +182,8 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 			  }
 			});
 		</script>
+		
+		<?php if(file_exists('inc/ga.php')) include 'inc/ga.php'; ?>
 	</head>
 	<body>
 	    <div id="header">
