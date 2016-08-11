@@ -78,6 +78,7 @@ div.event-div {
     background-color: white;
     margin-bottom: 1em;
     overflow: hidden;
+	background: #272822;
 }
 
 div.event-div p.event-name {
@@ -87,6 +88,7 @@ div.event-div p.event-name {
     text-align: center;
     font-weight: bold;
     /*background-color: #DDF;*/
+   color: #DDF;
 }
 
 div.event-div p.event-code {

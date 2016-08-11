@@ -161,7 +161,10 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 		</title>
 		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 		<script src="<?=GMF_PATH?>style/jquery-1.11.3.min.js"></script>
-		<link rel="stylesheet" href="<?=GMF_PATH?>style/style.css">
+		<link rel="stylesheet" href="<?=GMF_PATH?>style/style.css?v=2">
+		
+		<link rel="stylesheet" href="<?=GMF_PATH?>style/prism.css">
+		
 		<script type="text/javascript">
 			$(document).delegate('textarea', 'keydown', function(e) {
 			  var keyCode = e.keyCode || e.which;
@@ -185,7 +188,8 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 		
 		<?php if(file_exists('inc/ga.php')) include 'inc/ga.php'; ?>
 	</head>
-	<body>
+	<body class="language-gml">
+		<script src="<?=GMF_PATH?>style/prism.js"></script>
 	    <div id="header">
 			<?php switch ($method) {
 				case "":
@@ -237,7 +241,7 @@ if ($method=="preview" || $method=="display" || $method=="edit") {
 			<?php } ?>
 			<?php
 				for ($i=0;$i<count($output);$i+=1) {
-					echo '<div class="event-div"><p class="event-name">'.format_card_title($output[$i][0]).'</p><p class="event-code">'.syntax_highlight($output[$i][1]).'</p></div>';
+					echo '<div class="event-div"><p class="event-name">'.format_card_title($output[$i][0]).'</p><pre><code>'.$output[$i][1].'</pre></code></div>';
 				}
 			?>
 	    </div>
@@ -268,182 +272,4 @@ function format_card_title($title) {
 	}
 }
 
-function syntax_highlight($input) {
-	$KEYWORDS = array(
-		"argument",
-		"argument0",
-		"argument1",
-		"argument10",
-		"argument11",
-		"argument12",
-		"argument13",
-		"argument14",
-		"argument15",
-		"argument2",
-		"argument3",
-		"argument4",
-		"argument5",
-		"argument6",
-		"argument7",
-		"argument8",
-		"argument9",
-		"argument_count",
-		"argument_relative",
-		"background_alpha",
-		"background_blend",
-		"background_color",
-		"background_foreground",
-		"background_height",
-		"background_hspeed",
-		"background_htiled",
-		"background_index",
-		"background_showcolor",
-		"background_visible",
-		"background_vspeed",
-		"background_vtiled",
-		"background_width",
-		"background_x",
-		"background_xscale",
-		"background_y",
-		"background_yscale",
-		"caption_health",
-		"caption_lives",
-		"caption_score",
-		"current_day",
-		"current_hour",
-		"current_minute",
-		"current_month",
-		"current_second",
-		"current_time",
-		"current_weekday",
-		"current_year",
-		"cursor_sprite",
-		"debug_mode",
-		"display_aa",
-		"error_last",
-		"error_occurred",
-		"event_action",
-		"event_number",
-		"event_object",
-		"event_type",
-		"fps",
-		"game_id",
-		"gamemaker_pro",
-		"gamemaker_registered",
-		"gamemaker_version",
-		"health",
-		"instance_count",
-		"instance_id",
-		"keyboard_key",
-		"keyboard_lastchar",
-		"keyboard_lastkey",
-		"keyboard_string",
-		"lives",
-		"mouse_button",
-		"mouse_lastbutton",
-		"mouse_x",
-		"mouse_y",
-		"os_device",
-		"os_type",
-		"program_directory",
-		"room",
-		"room_caption",
-		"room_first",
-		"room_height",
-		"room_last",
-		"room_persistent",
-		"room_speed",
-		"room_width",
-		"score",
-		"secure_mode",
-		"show_health",
-		"show_lives",
-		"show_score",
-		"temp_directory",
-		"transition_color",
-		"transition_kind",
-		"transition_steps",
-		"view_angle",
-		"view_current",
-		"view_enabled",
-		"view_hborder",
-		"view_hport",
-		"view_hspeed",
-		"view_hview",
-		"view_object",
-		"view_vborder",
-		"view_visible",
-		"view_vspeed",
-		"view_wport",
-		"view_wview",
-		"view_xport",
-		"view_xview",
-		"view_yport",
-		"view_yview",
-		"working_directory",
-		"alarm",
-		"bbox_bottom",
-		"bbox_left",
-		"bbox_right",
-		"bbox_top",
-		"depth",
-		"direction",
-		"friction",
-		"gravity",
-		"gravity_direction",
-		"hspeed",
-		"id",
-		"image_alpha",
-		"image_angle",
-		"image_blend",
-		"image_index",
-		"image_number",
-		"image_single",
-		"image_speed",
-		"image_xscale",
-		"image_yscale",
-		"mask_index",
-		"object_index",
-		"path_endaction",
-		"path_index",
-		"path_orientation",
-		"path_position",
-		"path_positionprevious",
-		"path_scale",
-		"path_speed",
-		"persistent",
-		"solid",
-		"speed",
-		"sprite_height",
-		"sprite_index",
-		"sprite_width",
-		"sprite_xoffset",
-		"sprite_yoffset",
-		"timeline_index",
-		"timeline_loop",
-		"timeline_position",
-		"timeline_running",
-		"timeline_speed",
-		"visible",
-		"vspeed",
-		"x",
-		"xprevious",
-		"xstart",
-		"y",
-		"yprevious",
-		"ystart",
-		"pi"
-	);
-
-	$input = str_replace(' ', '&nbsp;', $input); //space preservation
-	$input = preg_replace('/("[^\"]*\")/m','<span class="constant">$1</span>',$input); //double quote strings
-	$input = preg_replace("/('[^']*')/m",'<span class="constant">$1</span>',$input); //single quote strings
-	$input = preg_replace('~(//.*?)(?:$|\n)~s','<span class="comment">$1</span>',$input); //single line comments
-	$input = preg_replace('~(/\*.*?\*/)~s','<span class="comment">$1</span>',$input); //double line comments
-	$input = preg_replace('~\b(\d+)\b~m','<span class="constant">$1</span>',$input); //numbers
-	$input = preg_replace('~\b(true|false|else|if|for|while)\b~m','<span class="constant">$1</span>',$input); //keywords
-	$input = preg_replace('~\b('.implode('|',$KEYWORDS).')\b~m','<span class="function">$1</span>',$input); //built-in variables
-	$input = preg_replace('/(\b[a-zA-Z_]+)(?=\()/m','<span class="function">$1</span>',$input); //functions
-	return nl2br($input);
-}
 ?>
